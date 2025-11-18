@@ -9,7 +9,7 @@ const SignUp = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state || '/'
-  console.log(from)
+
   // form submit handler
   const handleSubmit = async event => {
     event.preventDefault()
@@ -77,17 +77,32 @@ const SignUp = () => {
                 data-temp-mail-org='0'
               />
             </div>
+            {/* Image */}
             <div>
-              <label htmlFor='image' className='block mb-2 text-sm'>
-                Select Image:
+              <label
+                htmlFor='image'
+                className='block mb-2 text-sm font-medium text-gray-700'
+              >
+                Profile Image
               </label>
               <input
-                className='bg-gray-200 cursor-pointer'
+                name='image'
                 type='file'
                 id='image'
-                name='image'
                 accept='image/*'
+                className='block w-full text-sm text-gray-500
+      file:mr-4 file:py-2 file:px-4
+      file:rounded-md file:border-0
+      file:text-sm file:font-semibold
+      file:bg-lime-50 file:text-lime-700
+      hover:file:bg-lime-100
+      bg-gray-100 border border-dashed border-lime-300 rounded-md cursor-pointer
+      focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-lime-400
+      py-2'
               />
+              <p className='mt-1 text-xs text-gray-400'>
+                PNG, JPG or JPEG (max 2MB)
+              </p>
             </div>
             <div>
               <label htmlFor='email' className='block mb-2 text-sm'>

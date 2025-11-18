@@ -11,7 +11,7 @@ const Login = () => {
   const location = useLocation()
 
   const from = location.state || '/'
-  console.log(from)
+
   if (loading) return <LoadingSpinner />
   if (user) return <Navigate to={from} replace={true} />
 
