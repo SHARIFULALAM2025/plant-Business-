@@ -9,9 +9,8 @@ import {
   signOut,
   updateProfile,
 } from 'firebase/auth'
-import { app } from '../firebase/firebase.config'
 import { AuthContext } from './AuthContext'
-
+import { app } from "../firebase/firebase.config";
 const auth = getAuth(app)
 const googleProvider = new GoogleAuthProvider()
 
@@ -48,7 +47,7 @@ const AuthProvider = ({ children }) => {
 
   // onAuthStateChange
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async currentUser => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       console.log('CurrentUser-->', currentUser?.email)
       setUser(currentUser)
       setLoading(false)
