@@ -4,7 +4,7 @@ const cors = require('cors')
 const { MongoClient, ServerApiVersion } = require('mongodb')
 const admin = require('firebase-admin')
 const port = process.env.PORT || 3000
-const decoded = Buffer.from(process.env.FB_SERVICE_KEY, 'base64').toString(
+const decoded = Buffer.from(process.env.VITE_service_key, 'base64').toString(
   'utf-8'
 )
 const serviceAccount = JSON.parse(decoded)
@@ -27,7 +27,7 @@ app.use(
 )
 app.use(express.json())
 
-// jwt middlewares
+//jwt middlewares
 const verifyJWT = async (req, res, next) => {
   const token = req?.headers?.authorization?.split(' ')[1]
   console.log(token)
@@ -42,27 +42,37 @@ const verifyJWT = async (req, res, next) => {
     return res.status(401).send({ message: 'Unauthorized Access!', err })
   }
 }
+const uri = `mongodb+srv://${process.env.VITE_URI_USER}:${process.env.VITE_URI_PASS}@cluster0.sxgnyhx.mongodb.net/?appName=Cluster0`
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(process.env.MONGODB_URI, {
+const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  },
-})
+  }
+});
 async function run() {
   try {
-    // Send a ping to confirm a successful connection
-    await client.db('admin').command({ ping: 1 })
-    console.log(
-      'Pinged your deployment. You successfully connected to MongoDB!'
-    )
+    const database = client.db("plantDB");
+    const AllPlant = database.collection('plant');
+    // plant post api ....................
+    app.post('/plant/info', async(req, res) => {
+      const plantData = req.body;
+      const result = await AllPlant.insertOne(plantData);
+      res.send(result)
+    })
+    app.get("/data/allPlant", async (req, res) => {
+      const result = await AllPlant.find().toArray();
+      res.send(result)
+    })
+
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
-    // Ensures that the client will close when you finish/error
+
   }
 }
-run().catch(console.dir)
+run().catch(console.dir);
 
 app.get('/', (req, res) => {
   res.send('Hello from Server..')
