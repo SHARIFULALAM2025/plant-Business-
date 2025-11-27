@@ -104,6 +104,7 @@ async function run() {
       const session = await stripe.checkout.sessions.retrieve(sessionId)
       console.log(session);
       const plant = await AllPlant.findOne({ _id: new ObjectId(session.metadata.plantId)})
+     
 
       const order = await orderCollection.findOne({ transitionId: session.payment_intent })
       if (session.status === "complete" && plant && !order) {
@@ -118,6 +119,7 @@ async function run() {
           category: plant.category,
           quantity: 1,
           price: session.amount_total / 100,
+          plantImage:plant.image
         }
 
         const result = await orderCollection.insertOne(orderInfo);
@@ -138,6 +140,32 @@ async function run() {
       const id = req.params.id
       const result = await AllPlant.findOne({ _id: new ObjectId(id) })
       res.send(result)
+    })
+    //my order......serverApi
+    app.get('/my-order/:email', async (req, res) => {
+      const email = req.params.email
+      const result = await orderCollection.find({ customerEmail: email }).toArray()
+      res.send(result)
+
+
+    })
+    // customer ...seller ....order.......
+
+    app.get('/manage-order/:email', async (req, res) => {
+      const email = req.params.email
+      const result = await orderCollection.find({ 'seller.email': email }).toArray()
+      res.send(result)
+
+
+    })
+    //plant  seller.......api
+
+    app.get('/my-inventory/:email', async (req, res) => {
+      const email = req.params.email
+      const result = await AllPlant.find({ 'seller.email': email }).toArray()
+      res.send(result)
+
+
     })
 
     await client.db("admin").command({ ping: 1 });
